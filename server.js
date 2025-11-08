@@ -45,7 +45,16 @@ app.use(cors({
 }));
 
 // Allow preflight OPTIONS requests for POST/PUT
-app.options("*", cors());
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(new Error(`CORS blocked: ${origin}`), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // JWT Authentication
