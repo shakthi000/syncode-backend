@@ -15,12 +15,36 @@ const chatbotRoutes = require("./routes/chatbot");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
+
 
 // ==========================
 // 🔑 Middleware
 // ==========================
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://syncode-frontend-ga97.vercel.app"
+];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // allow Postman or server-to-server
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(new Error(`CORS policy blocked this origin: ${origin}`), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
+
+// Allow preflight OPTIONS requests for POST/PUT
+app.options("*", cors());
 app.use(express.json());
 
 // JWT Authentication
