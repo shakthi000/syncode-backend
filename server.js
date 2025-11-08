@@ -15,13 +15,6 @@ const chatbotRoutes = require("./routes/chatbot");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: allowedOrigins,
-    methods: ["GET", "POST"],
-    credentials: true
-  }
-});
 
 
 // ==========================
@@ -31,6 +24,14 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://syncode-frontend-ga97.vercel.app"
 ];
+
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
 
 app.use(cors({
   origin: function(origin, callback) {
